@@ -316,23 +316,42 @@ def _file_info(path, name):
 
 
 def _load_pastes(directory, viewer=None):
+    def _load_pastes(directory, viewer=None):
     posts = []
+
+    # ✅ FIX: prevent Render crash if folder doesn't exist
+    if not os.path.exists(directory):
+        return []
+
     viewer_name = viewer["username"] if viewer else None
     viewer_is_mod = viewer and RANKS.index(viewer["rank"]) >= RANKS.index("moderator")
-    for name in sorted(os.listdir(directory),
-                       key=lambda n: os.path.getmtime(os.path.join(directory, n)),
-                       reverse=True):
+
+    try:
+        files = os.listdir(directory)
+    except FileNotFoundError:
+        return []
+
+    for name in sorted(
+        files,
+        key=lambda n: os.path.getmtime(os.path.join(directory, n)),
+        reverse=True
+    ):
         path = os.path.join(directory, name)
+
         if not os.path.isfile(path):
             continue
+
         info = _file_info(path, name)
-        vis  = info["visibility"]
+        vis = info.get("visibility", "public")
+
         if vis == "private":
-            if not (viewer_is_mod or info["author"] == viewer_name):
+            if not (viewer_is_mod or info.get("author") == viewer_name):
                 continue
         elif vis == "unlisted":
             continue
+
         posts.append(info)
+
     return posts
 
 
