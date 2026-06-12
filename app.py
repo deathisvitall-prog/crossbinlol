@@ -20,6 +20,10 @@ os.makedirs(DATA, exist_ok=True)
 ADMIN_PASTES = os.path.join(DATA, "admin")
 ANON_PASTES  = os.path.join(DATA, "other")
 META_DIR     = os.path.join(DATA, "meta")
+# ✅ RENDER CRASH FIX: ensure folders exist
+os.makedirs(ADMIN_PASTES, exist_ok=True)
+os.makedirs(ANON_PASTES, exist_ok=True)
+os.makedirs(META_DIR, exist_ok=True)
 USERS_DB     = os.path.join(DATA, "users.db")
 SECRET_FILE  = os.path.join(DATA, "secret_key")
 
