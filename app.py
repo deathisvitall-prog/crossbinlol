@@ -641,11 +641,25 @@ def register():
             if existing:
                 error = "Username already taken."
             else:
-                db.execute(
-                    "INSERT INTO users (username, password_hash, rank, created_at) VALUES (?, ?, ?, ?)",
-                    (username, generate_password_hash(password), "user",
-                     datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
-                )
+                db = get_db()
+
+# ✅ check if any users exist
+existing_user = db.execute("SELECT id FROM users LIMIT 1").fetchone()
+
+if existing_user is None:
+    rank = "owner"
+else:
+    rank = "user"
+
+db.execute(
+    "INSERT INTO users (username, password_hash, rank, created_at) VALUES (?, ?, ?, ?)",
+    (
+        username,
+        generate_password_hash(password),
+        rank,
+        datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    )
+)
                 db.commit()
                 user = db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
                 session.clear()
