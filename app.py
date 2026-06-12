@@ -316,10 +316,9 @@ def _file_info(path, name):
 
 
 def _load_pastes(directory, viewer=None):
-    def _load_pastes(directory, viewer=None):
     posts = []
 
-    # ✅ FIX: prevent Render crash if folder doesn't exist
+    # prevent crash if folder doesn't exist
     if not os.path.exists(directory):
         return []
 
